@@ -28,6 +28,24 @@ export function KeycapEditor() {
     updateKeycap(selectedKeycap.id, updates);
   };
 
+  const handleTogglePlaceholder = () => {
+    if (selectedKeycap.isPlaceholder) {
+      // Convert from placeholder to normal keycap
+      handleUpdate({
+        isPlaceholder: false,
+        backgroundColor: pageSettings.defaultBackgroundColor,
+      });
+    } else {
+      // Convert from normal to placeholder
+      handleUpdate({
+        isPlaceholder: true,
+        backgroundColor: 'rgba(0, 0, 0, 0)', // Transparent
+        icon: { type: 'none' },
+        text: '',
+      });
+    }
+  };
+
   return (
     <div className="p-4 space-y-4">
       {/* Preview */}
@@ -37,6 +55,40 @@ export function KeycapEditor() {
           cornerRadius={pageSettings.cornerRadius}
           scale={2}
         />
+      </div>
+
+      {/* Keycap Type Toggle */}
+      <div>
+        <label className="text-sm font-medium text-neutral-300 block mb-2">Keycap Type</label>
+        <div className="flex gap-2">
+          <Button
+            variant={!selectedKeycap.isPlaceholder ? 'primary' : 'secondary'}
+            onClick={() => {
+              if (selectedKeycap.isPlaceholder) {
+                handleTogglePlaceholder();
+              }
+            }}
+            className="flex-1"
+          >
+            Normal
+          </Button>
+          <Button
+            variant={selectedKeycap.isPlaceholder ? 'primary' : 'secondary'}
+            onClick={() => {
+              if (!selectedKeycap.isPlaceholder) {
+                handleTogglePlaceholder();
+              }
+            }}
+            className="flex-1"
+          >
+            Placeholder
+          </Button>
+        </div>
+        {selectedKeycap.isPlaceholder && (
+          <p className="text-xs text-neutral-500 mt-2">
+            Placeholders are spacers that take up layout space but won't be printed.
+          </p>
+        )}
       </div>
 
       {/* Size */}
@@ -59,90 +111,95 @@ export function KeycapEditor() {
         />
       </div>
 
-      {/* Icon */}
-      <div>
-        <label className="text-sm font-medium text-neutral-300 block mb-2">Icon</label>
-        <Button
-          variant="secondary"
-          className="w-full flex items-center justify-center gap-2"
-          onClick={() => setIsIconPickerOpen(true)}
-        >
-          <Image size={16} />
-          {selectedKeycap.icon.type === 'none'
-            ? 'Select Icon'
-            : selectedKeycap.icon.type === 'lucide'
-            ? selectedKeycap.icon.name
-            : 'Custom Image'}
-        </Button>
-      </div>
-
-      {/* Colors */}
-      <ColorPicker
-        label="Background Color"
-        value={selectedKeycap.backgroundColor}
-        onChange={(backgroundColor) => handleUpdate({ backgroundColor })}
-        showTransparent
-      />
-
-      {/* Icon Color - disabled for non-SVG custom images */}
-      {selectedKeycap.icon.type === 'custom' &&
-       selectedKeycap.icon.dataUrl &&
-       !selectedKeycap.icon.dataUrl.includes('image/svg+xml') ? (
-        <div className="space-y-1">
-          <label className="text-sm font-medium text-neutral-500 block">Icon Color</label>
-          <div className="flex items-center gap-2 p-2 bg-neutral-800/50 border border-neutral-700 rounded-lg text-neutral-500">
-            <AlertTriangle size={14} />
-            <span className="text-xs">Color can't be changed for PNG/JPG images</span>
-          </div>
-        </div>
-      ) : (
-        <ColorPicker
-          label="Icon Color"
-          value={selectedKeycap.iconColor}
-          onChange={(iconColor) => handleUpdate({ iconColor })}
-          showTransparent={false}
-        />
-      )}
-
-      {/* Text */}
-      <div>
-        <label className="text-sm font-medium text-neutral-300 block mb-1">Text Label</label>
-        <input
-          type="text"
-          value={selectedKeycap.text || ''}
-          onChange={(e) => handleUpdate({ text: e.target.value })}
-          placeholder="Optional text..."
-          className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
-      {selectedKeycap.text && (
+      {/* Only show these options for non-placeholder keycaps */}
+      {!selectedKeycap.isPlaceholder && (
         <>
+          {/* Icon */}
+          <div>
+            <label className="text-sm font-medium text-neutral-300 block mb-2">Icon</label>
+            <Button
+              variant="secondary"
+              className="w-full flex items-center justify-center gap-2"
+              onClick={() => setIsIconPickerOpen(true)}
+            >
+              <Image size={16} />
+              {selectedKeycap.icon.type === 'none'
+                ? 'Select Icon'
+                : selectedKeycap.icon.type === 'lucide'
+                ? selectedKeycap.icon.name
+                : 'Custom Image'}
+            </Button>
+          </div>
+
+          {/* Colors */}
           <ColorPicker
-            label="Text Color"
-            value={selectedKeycap.textColor || 'rgba(0, 0, 0, 1)'}
-            onChange={(textColor) => handleUpdate({ textColor })}
-            showTransparent={false}
+            label="Background Color"
+            value={selectedKeycap.backgroundColor}
+            onChange={(backgroundColor) => handleUpdate({ backgroundColor })}
+            showTransparent
           />
 
+          {/* Icon Color - disabled for non-SVG custom images */}
+          {selectedKeycap.icon.type === 'custom' &&
+           selectedKeycap.icon.dataUrl &&
+           !selectedKeycap.icon.dataUrl.includes('image/svg+xml') ? (
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-neutral-500 block">Icon Color</label>
+              <div className="flex items-center gap-2 p-2 bg-neutral-800/50 border border-neutral-700 rounded-lg text-neutral-500">
+                <AlertTriangle size={14} />
+                <span className="text-xs">Color can't be changed for PNG/JPG images</span>
+              </div>
+            </div>
+          ) : (
+            <ColorPicker
+              label="Icon Color"
+              value={selectedKeycap.iconColor}
+              onChange={(iconColor) => handleUpdate({ iconColor })}
+              showTransparent={false}
+            />
+          )}
+
+          {/* Text */}
           <div>
-            <label className="text-sm font-medium text-neutral-300 block mb-1">
-              Text Position
-            </label>
-            <select
-              value={selectedKeycap.textPosition || 'below'}
-              onChange={(e) =>
-                handleUpdate({
-                  textPosition: e.target.value as 'below' | 'above' | 'center',
-                })
-              }
-              className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="below">Below Icon</option>
-              <option value="above">Above Icon</option>
-              <option value="center">Center (replaces icon)</option>
-            </select>
+            <label className="text-sm font-medium text-neutral-300 block mb-1">Text Label</label>
+            <input
+              type="text"
+              value={selectedKeycap.text || ''}
+              onChange={(e) => handleUpdate({ text: e.target.value })}
+              placeholder="Optional text..."
+              className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
+
+          {selectedKeycap.text && (
+            <>
+              <ColorPicker
+                label="Text Color"
+                value={selectedKeycap.textColor || 'rgba(0, 0, 0, 1)'}
+                onChange={(textColor) => handleUpdate({ textColor })}
+                showTransparent={false}
+              />
+
+              <div>
+                <label className="text-sm font-medium text-neutral-300 block mb-1">
+                  Text Position
+                </label>
+                <select
+                  value={selectedKeycap.textPosition || 'below'}
+                  onChange={(e) =>
+                    handleUpdate({
+                      textPosition: e.target.value as 'below' | 'above' | 'center',
+                    })
+                  }
+                  className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="below">Below Icon</option>
+                  <option value="above">Above Icon</option>
+                  <option value="center">Center (replaces icon)</option>
+                </select>
+              </div>
+            </>
+          )}
         </>
       )}
 

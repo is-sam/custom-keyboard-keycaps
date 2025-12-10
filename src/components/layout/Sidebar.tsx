@@ -4,9 +4,9 @@ import { KeycapEditor } from '../keycap/KeycapEditor';
 import { PageSettings } from '../settings/PageSettings';
 import { ExportPanel } from '../settings/ExportPanel';
 import { useKeycapStore } from '../../store/keycapStore';
-import { List, Edit, Settings, Download } from 'lucide-react';
+import { List, Edit, Settings, Printer } from 'lucide-react';
 
-type Tab = 'keycaps' | 'editor' | 'settings' | 'export';
+type Tab = 'keycaps' | 'editor' | 'settings' | 'print';
 
 export function Sidebar() {
   const [activeTab, setActiveTab] = useState<Tab>('keycaps');
@@ -19,11 +19,18 @@ export function Sidebar() {
     }
   }, [selectedKeycapId]);
 
+  // Auto-switch to keycaps when no keycap is selected from editor
+  useEffect(() => {
+    if (!selectedKeycapId && activeTab === 'editor') {
+      setActiveTab('keycaps');
+    }
+  }, [selectedKeycapId, activeTab]);
+
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: 'keycaps', label: 'Keycaps', icon: <List size={18} /> },
     { id: 'editor', label: 'Editor', icon: <Edit size={18} /> },
     { id: 'settings', label: 'Settings', icon: <Settings size={18} /> },
-    { id: 'export', label: 'Export', icon: <Download size={18} /> },
+    { id: 'print', label: 'Print', icon: <Printer size={18} /> },
   ];
 
   return (
@@ -51,7 +58,7 @@ export function Sidebar() {
         {activeTab === 'keycaps' && <KeycapList />}
         {activeTab === 'editor' && <KeycapEditor />}
         {activeTab === 'settings' && <PageSettings />}
-        {activeTab === 'export' && <ExportPanel />}
+        {activeTab === 'print' && <ExportPanel />}
       </div>
     </div>
   );
