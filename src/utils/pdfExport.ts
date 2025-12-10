@@ -7,10 +7,12 @@ import React from 'react';
 
 /**
  * Export keycaps to PDF with precise mm dimensions
+ * @param openInNewWindow - If true, opens PDF in new window instead of downloading
  */
 export async function exportToPDF(
   layout: PositionedKeycap[],
-  pageSettings: PageSettings
+  pageSettings: PageSettings,
+  openInNewWindow = false
 ): Promise<void> {
   const pdf = new jsPDF({
     orientation: 'portrait',
@@ -69,8 +71,21 @@ export async function exportToPDF(
     }
   }
 
-  // Download
-  pdf.save('keycaps.pdf');
+  // Download or open in new window
+  if (openInNewWindow) {
+    // Open PDF in new window for printing
+    const pdfBlob = pdf.output('blob');
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+    const printWindow = window.open(pdfUrl, '_blank');
+    if (printWindow) {
+      printWindow.onload = () => {
+        // Clean up the URL after the window is loaded
+        setTimeout(() => URL.revokeObjectURL(pdfUrl), 1000);
+      };
+    }
+  } else {
+    pdf.save('keycaps.pdf');
+  }
 }
 
 /**
