@@ -25,9 +25,8 @@ export function Keycap({
   const isTransparent = bgParsed.a < 1;
 
   // Calculate icon size (60% of smaller dimension, or full size if stretched)
-  const iconSize = keycap.stretchIcon
-    ? Math.min(widthPx, heightPx)
-    : Math.min(widthPx, heightPx) * 0.6;
+  const iconWidth = keycap.stretchIcon ? widthPx : Math.min(widthPx, heightPx) * 0.6;
+  const iconHeight = keycap.stretchIcon ? heightPx : Math.min(widthPx, heightPx) * 0.6;
 
   // Render icon
   const renderIcon = () => {
@@ -36,9 +35,13 @@ export function Keycap({
     if (keycap.icon.type === 'lucide' && keycap.icon.name) {
       const IconComponent = getLucideIcon(keycap.icon.name);
       if (IconComponent) {
+        // Lucide icons are square, so use the smaller dimension
+        const lucideSize = keycap.stretchIcon
+          ? Math.min(widthPx, heightPx)
+          : Math.min(widthPx, heightPx) * 0.6;
         return (
           <IconComponent
-            size={iconSize}
+            size={lucideSize}
             color={keycap.iconColor}
             strokeWidth={2}
           />
@@ -59,8 +62,8 @@ export function Keycap({
           return (
             <div
               style={{
-                width: iconSize,
-                height: iconSize,
+                width: iconWidth,
+                height: iconHeight,
                 color: keycap.iconColor,
                 display: 'flex',
                 alignItems: 'center',
@@ -78,9 +81,9 @@ export function Keycap({
               src={keycap.icon.dataUrl}
               alt="Custom icon"
               style={{
-                width: iconSize,
-                height: iconSize,
-                objectFit: 'contain',
+                width: iconWidth,
+                height: iconHeight,
+                objectFit: 'fill',
               }}
             />
           );
@@ -92,9 +95,9 @@ export function Keycap({
           src={keycap.icon.dataUrl}
           alt="Custom icon"
           style={{
-            width: iconSize,
-            height: iconSize,
-            objectFit: 'contain',
+            width: iconWidth,
+            height: iconHeight,
+            objectFit: keycap.stretchIcon ? 'fill' : 'contain',
           }}
         />
       );
