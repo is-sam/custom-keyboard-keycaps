@@ -165,7 +165,9 @@ async function drawLucideIconToCanvas(
 
   try {
     // Render icon to SVG string
-    const iconSize = Math.min(keycap.width, keycap.height) * 0.6 * scale;
+    const iconSize = keycap.stretchIcon
+      ? Math.min(keycap.width, keycap.height) * scale
+      : Math.min(keycap.width, keycap.height) * 0.6 * scale;
     const svgString = renderToStaticMarkup(
       React.createElement(IconComponent, {
         size: iconSize,
@@ -205,7 +207,9 @@ async function drawCustomIconToCanvas(
   if (!keycap.icon.dataUrl) return;
 
   try {
-    const iconSize = Math.min(keycap.width, keycap.height) * 0.6 * scale;
+    const iconSize = keycap.stretchIcon
+      ? Math.min(keycap.width, keycap.height) * scale
+      : Math.min(keycap.width, keycap.height) * 0.6 * scale;
     const x = keycap.x * scale;
     const y = keycap.y * scale;
     const iconX = x + (keycap.width * scale - iconSize) / 2;

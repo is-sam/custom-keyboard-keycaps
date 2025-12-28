@@ -136,7 +136,9 @@ async function drawLucideIconToPDF(
 
   try {
     // Calculate icon position and size
-    const iconSizeMm = Math.min(keycap.width, keycap.height) * 0.6;
+    const iconSizeMm = keycap.stretchIcon
+      ? Math.min(keycap.width, keycap.height)
+      : Math.min(keycap.width, keycap.height) * 0.6;
     const iconSizePx = iconSizeMm * 10; // Convert to pixels for rendering
     const iconX = keycap.x + (keycap.width - iconSizeMm) / 2;
 
@@ -176,7 +178,9 @@ async function drawCustomIconToPDF(
   if (!keycap.icon.dataUrl) return;
 
   try {
-    const iconSizeMm = Math.min(keycap.width, keycap.height) * 0.6;
+    const iconSizeMm = keycap.stretchIcon
+      ? Math.min(keycap.width, keycap.height)
+      : Math.min(keycap.width, keycap.height) * 0.6;
     const iconX = keycap.x + (keycap.width - iconSizeMm) / 2;
 
     let iconY: number;

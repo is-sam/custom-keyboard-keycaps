@@ -15,6 +15,7 @@ export interface Keycap {
   textColor?: string;      // Text color rgba()
   textPosition?: 'below' | 'above' | 'center';
   isPlaceholder?: boolean; // If true, this keycap is just a spacer (won't print)
+  stretchIcon?: boolean;   // If true, icon fills entire keycap (edge to edge)
 }
 
 export interface PositionedKeycap extends Keycap {

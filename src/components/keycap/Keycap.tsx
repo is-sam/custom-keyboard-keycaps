@@ -24,8 +24,10 @@ export function Keycap({
   const bgParsed = parseRgba(keycap.backgroundColor);
   const isTransparent = bgParsed.a < 1;
 
-  // Calculate icon size (60% of smaller dimension)
-  const iconSize = Math.min(widthPx, heightPx) * 0.6;
+  // Calculate icon size (60% of smaller dimension, or full size if stretched)
+  const iconSize = keycap.stretchIcon
+    ? Math.min(widthPx, heightPx)
+    : Math.min(widthPx, heightPx) * 0.6;
 
   // Render icon
   const renderIcon = () => {

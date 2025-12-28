@@ -129,6 +129,17 @@ export function KeycapEditor() {
                 ? selectedKeycap.icon.name
                 : 'Custom Image'}
             </Button>
+            {selectedKeycap.icon.type !== 'none' && (
+              <label className="flex items-center gap-2 mt-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={selectedKeycap.stretchIcon || false}
+                  onChange={(e) => handleUpdate({ stretchIcon: e.target.checked })}
+                  className="w-4 h-4 text-blue-600 bg-neutral-800 border-neutral-600 rounded focus:ring-blue-500"
+                />
+                <span className="text-sm text-neutral-300">Stretch to fill</span>
+              </label>
+            )}
           </div>
 
           {/* Colors */}
