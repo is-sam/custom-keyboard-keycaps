@@ -34,6 +34,8 @@ export interface PageSettings {
   showCutGuides: boolean;  // Show dashed lines around keycaps
   defaultIconColor: string;       // Default icon color for new keycaps
   defaultBackgroundColor: string; // Default background color for new keycaps
+  defaultKeycapWidth: number;     // Default width for new keycaps (mm)
+  defaultKeycapHeight: number;    // Default height for new keycaps (mm)
 }
 
 export interface ExportSettings {

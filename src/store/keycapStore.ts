@@ -50,6 +50,8 @@ const defaultPageSettings: PageSettings = {
   showCutGuides: true,
   defaultIconColor: 'rgba(0, 0, 0, 1)',
   defaultBackgroundColor: 'rgba(255, 255, 255, 1)',
+  defaultKeycapWidth: DEFAULT_KEYCAP_WIDTH_MM,
+  defaultKeycapHeight: DEFAULT_KEYCAP_HEIGHT_MM,
 };
 
 const defaultExportSettings: ExportSettings = {
@@ -62,8 +64,8 @@ const createDefaultKeycap = (
   pageSettings?: PageSettings
 ): Keycap => ({
   id: uuidv4(),
-  width: DEFAULT_KEYCAP_WIDTH_MM,
-  height: DEFAULT_KEYCAP_HEIGHT_MM,
+  width: pageSettings?.defaultKeycapWidth || DEFAULT_KEYCAP_WIDTH_MM,
+  height: pageSettings?.defaultKeycapHeight || DEFAULT_KEYCAP_HEIGHT_MM,
   icon: { type: 'none' },
   iconColor: pageSettings?.defaultIconColor || 'rgba(0, 0, 0, 1)',
   backgroundColor: pageSettings?.defaultBackgroundColor || 'rgba(255, 255, 255, 1)',

@@ -83,6 +83,31 @@ export function PageSettings() {
       </div>
 
       <div>
+        <h3 className="text-sm font-semibold text-neutral-200 mb-3">Default Keycap Size</h3>
+        <p className="text-xs text-neutral-500 mb-3">
+          Applied to newly created keycaps
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <NumberInput
+            label="Width (mm)"
+            value={pageSettings.defaultKeycapWidth || 12}
+            onChange={(defaultKeycapWidth) => updatePageSettings({ defaultKeycapWidth })}
+            min={1}
+            max={pageSettings.width}
+            step={0.5}
+          />
+          <NumberInput
+            label="Height (mm)"
+            value={pageSettings.defaultKeycapHeight || 14}
+            onChange={(defaultKeycapHeight) => updatePageSettings({ defaultKeycapHeight })}
+            min={1}
+            max={pageSettings.height}
+            step={0.5}
+          />
+        </div>
+      </div>
+
+      <div>
         <h3 className="text-sm font-semibold text-neutral-200 mb-3">Default Colors</h3>
         <p className="text-xs text-neutral-500 mb-3">
           Applied to newly created keycaps

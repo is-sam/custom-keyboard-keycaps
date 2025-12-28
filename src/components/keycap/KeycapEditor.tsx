@@ -97,16 +97,16 @@ export function KeycapEditor() {
           label="Width"
           value={selectedKeycap.width}
           onChange={(width) => handleUpdate({ width })}
-          min={5}
-          max={50}
+          min={1}
+          max={pageSettings.width}
           step={0.5}
         />
         <NumberInput
           label="Height"
           value={selectedKeycap.height}
           onChange={(height) => handleUpdate({ height })}
-          min={5}
-          max={50}
+          min={1}
+          max={pageSettings.height}
           step={0.5}
         />
       </div>
