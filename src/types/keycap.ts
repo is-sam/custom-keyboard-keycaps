@@ -15,6 +15,7 @@ export interface Keycap {
   textColor?: string;      // Text color rgba()
   textPosition?: 'below' | 'above' | 'center';
   isPlaceholder?: boolean; // If true, this keycap is just a spacer (won't print)
+  stretchIcon?: boolean;   // If true, icon fills entire keycap (edge to edge)
 }
 
 export interface PositionedKeycap extends Keycap {
@@ -34,6 +35,8 @@ export interface PageSettings {
   showCutGuides: boolean;  // Show dashed lines around keycaps
   defaultIconColor: string;       // Default icon color for new keycaps
   defaultBackgroundColor: string; // Default background color for new keycaps
+  defaultKeycapWidth: number;     // Default width for new keycaps (mm)
+  defaultKeycapHeight: number;    // Default height for new keycaps (mm)
 }
 
 export interface ExportSettings {

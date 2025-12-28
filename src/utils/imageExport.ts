@@ -165,7 +165,9 @@ async function drawLucideIconToCanvas(
 
   try {
     // Render icon to SVG string
-    const iconSize = Math.min(keycap.width, keycap.height) * 0.6 * scale;
+    const iconSize = keycap.stretchIcon
+      ? Math.min(keycap.width, keycap.height) * scale
+      : Math.min(keycap.width, keycap.height) * 0.6 * scale;
     const svgString = renderToStaticMarkup(
       React.createElement(IconComponent, {
         size: iconSize,
@@ -205,18 +207,23 @@ async function drawCustomIconToCanvas(
   if (!keycap.icon.dataUrl) return;
 
   try {
-    const iconSize = Math.min(keycap.width, keycap.height) * 0.6 * scale;
+    const iconWidth = keycap.stretchIcon
+      ? keycap.width * scale
+      : Math.min(keycap.width, keycap.height) * 0.6 * scale;
+    const iconHeight = keycap.stretchIcon
+      ? keycap.height * scale
+      : Math.min(keycap.width, keycap.height) * 0.6 * scale;
     const x = keycap.x * scale;
     const y = keycap.y * scale;
-    const iconX = x + (keycap.width * scale - iconSize) / 2;
+    const iconX = x + (keycap.width * scale - iconWidth) / 2;
 
     let iconY: number;
     if (keycap.text && keycap.textPosition === 'below') {
-      iconY = y + (keycap.height * scale * 0.35 - iconSize / 2);
+      iconY = y + (keycap.height * scale * 0.35 - iconHeight / 2);
     } else if (keycap.text && keycap.textPosition === 'above') {
-      iconY = y + (keycap.height * scale * 0.65 - iconSize / 2);
+      iconY = y + (keycap.height * scale * 0.65 - iconHeight / 2);
     } else {
-      iconY = y + (keycap.height * scale - iconSize) / 2;
+      iconY = y + (keycap.height * scale - iconHeight) / 2;
     }
 
     const isSvg = keycap.icon.dataUrl.includes('image/svg+xml');
@@ -228,7 +235,7 @@ async function drawCustomIconToCanvas(
 
       // Load with color replacement
       const img = await loadSvgAsImage(svgString, keycap.iconColor);
-      ctx.drawImage(img, iconX, iconY, iconSize, iconSize);
+      ctx.drawImage(img, iconX, iconY, iconWidth, iconHeight);
     } else {
       // For PNG/JPEG, load directly
       const img = new Image();
@@ -238,7 +245,7 @@ async function drawCustomIconToCanvas(
         img.src = keycap.icon.dataUrl!;
       });
 
-      ctx.drawImage(img, iconX, iconY, iconSize, iconSize);
+      ctx.drawImage(img, iconX, iconY, iconWidth, iconHeight);
     }
   } catch (e) {
     console.error('Failed to draw custom icon:', e);

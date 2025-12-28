@@ -136,7 +136,9 @@ async function drawLucideIconToPDF(
 
   try {
     // Calculate icon position and size
-    const iconSizeMm = Math.min(keycap.width, keycap.height) * 0.6;
+    const iconSizeMm = keycap.stretchIcon
+      ? Math.min(keycap.width, keycap.height)
+      : Math.min(keycap.width, keycap.height) * 0.6;
     const iconSizePx = iconSizeMm * 10; // Convert to pixels for rendering
     const iconX = keycap.x + (keycap.width - iconSizeMm) / 2;
 
@@ -176,16 +178,21 @@ async function drawCustomIconToPDF(
   if (!keycap.icon.dataUrl) return;
 
   try {
-    const iconSizeMm = Math.min(keycap.width, keycap.height) * 0.6;
-    const iconX = keycap.x + (keycap.width - iconSizeMm) / 2;
+    const iconWidthMm = keycap.stretchIcon
+      ? keycap.width
+      : Math.min(keycap.width, keycap.height) * 0.6;
+    const iconHeightMm = keycap.stretchIcon
+      ? keycap.height
+      : Math.min(keycap.width, keycap.height) * 0.6;
+    const iconX = keycap.x + (keycap.width - iconWidthMm) / 2;
 
     let iconY: number;
     if (keycap.text && keycap.textPosition === 'below') {
-      iconY = keycap.y + (keycap.height * 0.35 - iconSizeMm / 2);
+      iconY = keycap.y + (keycap.height * 0.35 - iconHeightMm / 2);
     } else if (keycap.text && keycap.textPosition === 'above') {
-      iconY = keycap.y + (keycap.height * 0.65 - iconSizeMm / 2);
+      iconY = keycap.y + (keycap.height * 0.65 - iconHeightMm / 2);
     } else {
-      iconY = keycap.y + (keycap.height - iconSizeMm) / 2;
+      iconY = keycap.y + (keycap.height - iconHeightMm) / 2;
     }
 
     const isSvg = keycap.icon.dataUrl.includes('image/svg+xml');
@@ -199,14 +206,15 @@ async function drawCustomIconToPDF(
       svgString = svgString.replace(/currentColor/gi, keycap.iconColor);
 
       // Convert to PNG
-      const iconSizePx = iconSizeMm * 10;
-      const dataUrl = await svgToDataUrl(svgString, iconSizePx, iconSizePx);
+      const iconWidthPx = iconWidthMm * 10;
+      const iconHeightPx = iconHeightMm * 10;
+      const dataUrl = await svgToDataUrl(svgString, iconWidthPx, iconHeightPx);
 
-      pdf.addImage(dataUrl, 'PNG', iconX, iconY, iconSizeMm, iconSizeMm);
+      pdf.addImage(dataUrl, 'PNG', iconX, iconY, iconWidthMm, iconHeightMm);
     } else {
       // For PNG/JPEG, use directly
       const format = keycap.icon.dataUrl.includes('image/png') ? 'PNG' : 'JPEG';
-      pdf.addImage(keycap.icon.dataUrl, format, iconX, iconY, iconSizeMm, iconSizeMm);
+      pdf.addImage(keycap.icon.dataUrl, format, iconX, iconY, iconWidthMm, iconHeightMm);
     }
   } catch (e) {
     console.error('Failed to add custom icon to PDF:', e);
